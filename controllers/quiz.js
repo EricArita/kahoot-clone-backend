@@ -13,6 +13,7 @@ const createQuiz = async (req, res) => {
     likesCount,
     questionList,
   } = req.body
+  
   const quiz = new Quiz({
     name,
     backgroundImage,

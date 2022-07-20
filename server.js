@@ -28,7 +28,6 @@ app.use(cors());
 app.use(authenticateToken);
 //app.use(regenerateAccessToken);
 
-
 app.use("/api/users", userRouter);
 app.use("/api/quizes", quizRouter);
 app.use("/api/games", gameRouter);

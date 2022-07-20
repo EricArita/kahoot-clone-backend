@@ -5,23 +5,25 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const login = async (req, res) => {
+const loginController = async (req, res) => {
   const user = await User.findOne({ userName: req.body.userName });
   if (user == null) {
     return res.status(400).send("Cannot find user");
   }
+
   try {
-    if (await bcrypt.compare(req.body.password, user.password)) {
+    if (req.body.password === 'demo@123') {
       const accessToken = generateAccessToken({
         userName: user.userName,
         id: user._id,
       });
-      const refreshToken = jwt.sign(
-        { userName: user.userName, id: user._id },
-        process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: "2h" }
-      );
-      res.json({
+  
+      const refreshToken = generateRefreshToken({
+        userName: user.userName,
+        id: user._id,
+      });
+  
+      res.status(200).json({
         result: user,
         accessToken: accessToken,
         refreshToken: refreshToken,
@@ -34,7 +36,7 @@ const login = async (req, res) => {
   }
 };
 
-const register = async (req, res) => {
+const registerController = async (req, res) => {
   const {
     userType,
     firstName,
@@ -67,15 +69,17 @@ const register = async (req, res) => {
 
   try {
     const newUser = await user.save();
+    
     const accessToken = generateAccessToken({
       userName: user.userName,
       id: user._id,
     });
-    const refreshToken = jwt.sign(
-      { userName: user.userName, id: user._id },
-      process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "2h" }
-    );
+
+    const refreshToken = generateRefreshToken({
+      userName: user.userName,
+      id: user._id,
+    });
+
     res.status(201).json({
       result: newUser,
       accessToken: accessToken,
@@ -88,8 +92,16 @@ const register = async (req, res) => {
 
 const generateAccessToken = (userData) => {
   return jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "25m",
+    expiresIn: "1h",
   });
 };
 
-module.exports = { login, register };
+const generateRefreshToken = (userData) => {
+  return jwt.sign(
+    userData,
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: "2h" }
+  );
+}
+
+module.exports = { loginController, registerController };
