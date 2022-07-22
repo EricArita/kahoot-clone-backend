@@ -27,7 +27,7 @@ const createLeaderboard = async (req, res) => {
 
   try {
     const newLeaderboard = await leaderboard.save()
-    res.status(201).json(newLeaderboard)
+    res.status(200).json(newLeaderboard)
   } catch (error) {
     res.status(400).json({ message: error.message })
   }

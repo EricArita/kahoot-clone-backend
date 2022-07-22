@@ -24,9 +24,11 @@ io.on("connection", (socket) => {
     console.log("Socket " + socket.id + " was disconnected")
     console.log(reason)
   })
+
   socket.on("init-game", (newGame, newLeaderboard) => {
     game = JSON.parse(JSON.stringify(newGame))
     leaderboard = JSON.parse(JSON.stringify(newLeaderboard))
+    
     socket.join(game.pin) 
     hostId = socket.id
     console.log(
@@ -37,17 +39,11 @@ io.on("connection", (socket) => {
   socket.on("add-player", (user, socketId, pin, cb) => {
     if (game.pin === pin) {
       addPlayer(user.userName, socketId)
-      // console.log(game._id)
       cb("correct", user._id, game._id)
       socket.join(game.pin)
-      console.log(
-        "Student " +
-          user.userName +
-          " with id " +
-          socket.id +
-          " joined room " +
-          game.pin
-      )
+      
+      console.log("Người chơi " + user.userName + " with id " + socket.id + " joined room " + game.pin)
+      
       let player = getPlayer(socketId)
       io.emit("player-added", player)
     } else {
@@ -57,8 +53,6 @@ io.on("connection", (socket) => {
 
   socket.on("start-game", (newQuiz) => {
     quiz = JSON.parse(JSON.stringify(newQuiz))
-    console.log("Move players to game") 
-    console.log(game.pin)
     socket.to(game.pin).emit("move-to-game-page", game._id)
   }) 
 

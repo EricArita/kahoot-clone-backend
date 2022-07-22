@@ -17,7 +17,7 @@ const createGame = async (req, res) => {
 
   try {
     const newGame = await game.save()
-    res.status(201).json(newGame)
+    res.status(200).json(newGame)
   } catch (error) {
     res.status(400).json({ message: error.message })
   }
