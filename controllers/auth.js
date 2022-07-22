@@ -12,7 +12,7 @@ const loginController = async (req, res) => {
   }
 
   try {
-    if (req.body.password === 'demo@123') {
+    if (bcrypt.compare(req.body.password, user.password)) {
       const accessToken = generateAccessToken({
         userName: user.userName,
         id: user._id,
